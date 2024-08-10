@@ -1,0 +1,6 @@
+@PureFinance.API_HostAddress = http://localhost:5039
+
+GET {{PureFinance.API_HostAddress}}/api/stock
+Accept: application/json
+
+###
