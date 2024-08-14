@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Pure.Application.Dtos.Stock;
+using Pure.Application.Interfaces;
 using Pure.Application.Mappers;
 using Pure.Infrastructure.Context;
 
@@ -10,17 +11,17 @@ namespace PureFinance.API.Controllers
     [ApiController]
     public class StockController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IStockRepository _stockRepo;
 
-        public StockController(ApplicationDbContext dbContext)
+        public StockController(IStockRepository stockRepository)
         {
-            _context = dbContext;
+            _stockRepo = stockRepository;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var stocks = await _context.Stock.ToListAsync();
+            var stocks = await _stockRepo.GetAllAsync();
 
             var stockDto = stocks.Select(x => x.ToStockDto());
 
@@ -28,24 +29,20 @@ namespace PureFinance.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public  IActionResult GetById([FromRoute] int id) 
+        public async Task<IActionResult> GetById([FromRoute] int id) 
         { 
-            var sotck = _context.Stock.Find(id);
+            var stock = await _stockRepo.GetByIdAsync(id);
 
-            if(sotck == null) return NotFound();
+            if(stock == null) return NotFound();
 
-            return Ok(sotck.ToStockDto());
+            return Ok(stock.ToStockDto());
         }
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateStockRequestDto sotckDto)
         {
             var stockModel = sotckDto.ToStockFromCreateDTO();
-
-            await _context.Stock.AddAsync(stockModel);
-
-            await _context.SaveChangesAsync();
-
+            await _stockRepo.CreateAsync(stockModel);
             return CreatedAtAction(nameof(GetById), new {id = stockModel.Id }, stockModel.ToStockDto());
         }
 
@@ -53,18 +50,9 @@ namespace PureFinance.API.Controllers
         [Route("{id}")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateStockRequestDto updateDto)
         {
-            var stockModel = await _context.Stock.FirstOrDefaultAsync(x => x.Id == id);
+            var stockModel = await _stockRepo.UpdateAsync(id, updateDto);
 
             if(stockModel == null) return NotFound();
-
-            stockModel.Symbol = updateDto.Symbol;
-            stockModel.CompanyName = updateDto.CompanyName;
-            stockModel.Purchase = updateDto.Purchase;
-            stockModel.LastDiv = updateDto.LastDiv;
-            stockModel.Industry = updateDto.Industry;
-            stockModel.MarketCap = updateDto.MarketCap;
-
-            await _context.SaveChangesAsync();
 
             return Ok(stockModel.ToStockDto());
         }
@@ -73,13 +61,9 @@ namespace PureFinance.API.Controllers
         [Route("{id}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
-            var stockModel = await _context.Stock.FirstOrDefaultAsync(x => x.Id == id);
+            var stockModel = await _stockRepo.DeleteAsync(id);
 
             if(stockModel == null) return NotFound();    
-
-            _context.Stock.Remove(stockModel);
-
-            await _context.SaveChangesAsync();
 
             return NoContent();
         }

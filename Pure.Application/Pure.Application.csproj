@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Dtos\Comment\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Pure.Domain\Pure.Domain.csproj" />
   </ItemGroup>
 
