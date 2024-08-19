@@ -1,6 +1,4 @@
-﻿
-
-namespace Pure.Domain.Models
+﻿namespace Pure.Domain.Models
 {
     public class Comment
     {

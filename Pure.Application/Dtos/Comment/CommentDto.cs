@@ -1,6 +1,4 @@
-﻿
-
-namespace Pure.Application.Dtos.Comment
+﻿namespace Pure.Application.Dtos.Comment
 {
     public class CommentDto
     {
