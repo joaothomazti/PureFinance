@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Rewrite;
 using Pure.Application.Dtos.Account;
+using Pure.Application.Interfaces;
 using Pure.Domain.Models;
 
 namespace PureFinance.API.Controllers
@@ -11,9 +12,13 @@ namespace PureFinance.API.Controllers
     public class AccountController : ControllerBase
     {
         private readonly UserManager<AppUser> _userManager;
-        public AccountController(UserManager<AppUser> userManager)
+        private readonly ITokenService _tokenService;
+        private readonly SignInManager<AppUser> _signInManager;
+        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, ITokenService tokenService)
         {
             _userManager = userManager;
+            _signInManager = signInManager;
+            _tokenService = tokenService;
         }
 
         [HttpPost]
@@ -37,7 +42,12 @@ namespace PureFinance.API.Controllers
                     var roleResult = await _userManager.AddToRoleAsync(appUser, "User");
                     if(roleResult.Succeeded)
                     {
-                        return Ok(roleResult);
+                        return Ok( new NewUserDto
+                        {
+                            UserName = appUser.UserName,
+                            Email = appUser.Email,
+                            Token = _tokenService.CreateToken(appUser)
+                        });
                     }
                     else
                     {
