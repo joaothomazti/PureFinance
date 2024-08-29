@@ -1,5 +1,8 @@
-﻿namespace Pure.Domain.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Pure.Domain.Models
 {
+    [Table("Comments")]
     public class Comment
     {
         public int Id { get; set; }

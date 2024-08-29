@@ -35,7 +35,7 @@ namespace Pure.Application.Services
                 Expires = DateTime.UtcNow.AddDays(1),
                 SigningCredentials = creds,
                 Issuer = _config["JWT:Issuer"],
-                Audience = _config["JWT:Audiance"]
+                Audience = _config["JWT:Audience"]
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();

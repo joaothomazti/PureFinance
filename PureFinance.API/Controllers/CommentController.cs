@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Pure.Application.Dtos.Comment;
 using Pure.Application.Interfaces;
 using Pure.Application.Mappers;
