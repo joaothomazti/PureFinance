@@ -66,6 +66,11 @@ namespace Pure.Infrastructure.Repository
             return await _context.Stock.Include(c => c.Comments).FirstOrDefaultAsync(x => x.Id == id);
         }
 
+        public async Task<Stock?> GetBySymbolAsync(string symbol)
+        {
+            return await _context.Stock.FirstOrDefaultAsync(x => x.Symbol == symbol);
+        }
+
         public Task<bool> StockExists(int id)
         {
             return _context.Stock.AnyAsync(x => x.Id == id);
